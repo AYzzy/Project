@@ -1,4 +1,4 @@
-package africaSemicolon.contact4.dtos;
+package com.example.contactmanagement.dtos;
 
 import lombok.Data;
 

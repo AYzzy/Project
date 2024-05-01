@@ -1,15 +1,19 @@
-package africaSemicolon.contact4.service;
+package com.example.contactmanagement.service;
 
 
-import africaSemicolon.contact4.dtos.ContactDto;
-import africaSemicolon.contact4.data.model.Contact;
-import africaSemicolon.contact4.data.repository.ContactRepository;
-import africaSemicolon.contact4.dtos.reponse.ContactDtoResponse;
-import africaSemicolon.contact4.dtos.request.DeleteContactRequest;
-import africaSemicolon.contact4.dtos.request.UpdateContactRequest;
-import africaSemicolon.contact4.exception.ContactNotFound;
-import africaSemicolon.contact4.exception.UserAlreadyExistException;
 
+import com.example.contactmanagement.data.model.Contact;
+
+import com.example.contactmanagement.data.repository.ContactRepository;
+import com.example.contactmanagement.dtos.ContactDto;
+import com.example.contactmanagement.dtos.GetContactRequest;
+import com.example.contactmanagement.dtos.reponse.ContactDtoResponse;
+import com.example.contactmanagement.dtos.reponse.UpdateContactResponse;
+import com.example.contactmanagement.dtos.request.DeleteContactRequest;
+import com.example.contactmanagement.dtos.request.FindContactRequest;
+import com.example.contactmanagement.dtos.request.UpdateContactRequest;
+import com.example.contactmanagement.exception.ContactNotFound;
+import com.example.contactmanagement.exception.UserAlreadyExistException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -43,15 +47,21 @@ public class ContactServiceImpl implements ContactService {
 
         return contact;
     }
-
+                    
     @Override
     public Contact updateContact(UpdateContactRequest updatedContactDto) {
-        Contact existingContact = contactRepository.findContact(updatedContactDto.getFirstName());
+        Contact existingContact = contactRepository.findContactByPhoneNumber(updatedContactDto.getPhoneNumber());
         existingContact.setFirstName(updatedContactDto.getNewFirstName());
         existingContact.setLastName(updatedContactDto.getNewLastName());
         existingContact.setEmail(updatedContactDto.getNewEmail());
         existingContact.setPhoneNumber(updatedContactDto.getNewPhoneNumber());
-        Contact updatedContact = contactRepository.save(existingContact);
+        contactRepository.save(existingContact);
+
+        UpdateContactResponse updateContactResponse = new UpdateContactResponse();
+        updateContactResponse.setFirstName(updateContactResponse.getNewFirstName());
+        updateContactResponse.setLastName(updatedContactDto.getNewLastName());
+        updateContactResponse.setEmail(updateContactResponse.getNewEmail());
+        updateContactResponse.setPhoneNumber(updateContactResponse.getNewPhoneNumber());
         return existingContact;
     }
 
@@ -61,12 +71,22 @@ public class ContactServiceImpl implements ContactService {
         contactRepository.delete(contact);
         return "Deleted Successfully.";
     }
-    @Override
-    public Contact getContact(String username) {
-        Contact contact = contactRepository.findContact(username);
+
+    private Contact getContact(String phoneNumber) {
+        Contact contact = contactRepository.findContactByPhoneNumber(phoneNumber);
         if(contact == null)throw new ContactNotFound("This number doesnt exist");
         return contact;
     }
+
+    @Override
+    public Contact findContactByPhoneNumber(FindContactRequest findContactRequest) {
+        Contact contact = getContact(findContactRequest.getPhoneNumber());
+        contactRepository.findContactByPhoneNumber(findContactRequest.getPhoneNumber());
+        FindContactRequest findContactRequest1 = new FindContactRequest();
+        contact.setPhoneNumber(findContactRequest1.getPhoneNumber());
+        return contact;
+    }
+
 
     @Override
     public List<Contact> findAllContacts() {

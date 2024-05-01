@@ -1,6 +1,6 @@
-package africaSemicolon.contact4.exception;
+package com.example.contactmanagement.exception;
 
-public class UserNotFoundException extends RuntimeException {
+public class UserNotFoundException extends ContactManagerException {
     public UserNotFoundException(String message) {
         super(message);
     }

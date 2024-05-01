@@ -1,11 +1,12 @@
-package africaSemicolon.data.repository;
+package com.example.contactmanagement.data.repository;
 
-import africaSemicolon.data.model.Contact;
+import com.example.contactmanagement.data.model.Contact;
 import org.springframework.data.mongodb.repository.MongoRepository;
 import org.springframework.stereotype.Repository;
 
 
 public interface ContactRepository extends MongoRepository<Contact, String> {
-    Contact findContact(String username);
+
+    Contact findContactByPhoneNumber(String phoneNumber);
 
 }

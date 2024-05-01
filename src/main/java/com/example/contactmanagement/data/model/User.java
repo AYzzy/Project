@@ -1,4 +1,4 @@
-package africaSemicolon.contact4.data.model;
+package com.example.contactmanagement.data.model;
 
 import lombok.Data;
 import org.springframework.data.annotation.Id;

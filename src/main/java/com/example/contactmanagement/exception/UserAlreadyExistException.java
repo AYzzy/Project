@@ -1,7 +1,7 @@
-package africaSemicolon.contact4.exception;
+package com.example.contactmanagement.exception;
 
-public class UserAlreadyExistException extends RuntimeException {
+public class UserAlreadyExistException extends ContactManagerException {
     public UserAlreadyExistException(String message){
-
+        super(message);
     }
 }

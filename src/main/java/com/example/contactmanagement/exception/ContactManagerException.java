@@ -1,4 +1,4 @@
-package africaSemicolon.contact4.exception;
+package com.example.contactmanagement.exception;
 
 public class ContactManagerException extends RuntimeException {
     public ContactManagerException(String message){

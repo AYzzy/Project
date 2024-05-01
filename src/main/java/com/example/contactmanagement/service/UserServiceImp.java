@@ -1,17 +1,18 @@
-package africaSemicolon.contact4.service;
+package com.example.contactmanagement.service;
 
-
-import africaSemicolon.contact4.dtos.ContactDto;
-import africaSemicolon.contact4.dtos.LoginRequest;
-import africaSemicolon.contact4.dtos.LogoutRequest;
-import africaSemicolon.contact4.dtos.UserRequest;
-import africaSemicolon.contact4.data.model.Contact;
-import africaSemicolon.contact4.data.model.User;
-import africaSemicolon.contact4.data.repository.UserRepository;
-import africaSemicolon.contact4.dtos.request.DeleteContactRequest;
-import africaSemicolon.contact4.dtos.request.UpdateContactRequest;
-import africaSemicolon.contact4.dtos.request.UpdateUserRequest;
-import africaSemicolon.contact4.exception.UserNotFoundException;
+import com.example.contactmanagement.data.model.Contact;
+import com.example.contactmanagement.data.model.User;
+import com.example.contactmanagement.data.repository.UserRepository;
+import com.example.contactmanagement.dtos.ContactDto;
+import com.example.contactmanagement.dtos.LoginRequest;
+import com.example.contactmanagement.dtos.LogoutRequest;
+import com.example.contactmanagement.dtos.UserRequest;
+import com.example.contactmanagement.dtos.reponse.DeleteUserResponse;
+import com.example.contactmanagement.dtos.request.*;
+import com.example.contactmanagement.exception.UserDoseNotExist;
+import com.example.contactmanagement.exception.UserNotFoundException;
+import com.example.contactmanagement.exception.UsernameDoseNotExist;
+import com.example.contactmanagement.exception.WrongUserName;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -26,31 +27,35 @@ public class UserServiceImp implements UserService{
 
     @Override
     public String register(UserRequest userRequest) {
-        User user = new User();
-        user.setFirstName(user.getFirstName());
-        user.setLastName(user.getLastName());
-        user.setUsername(user.getUsername());
-        user.setPassword(user.getPassword());
-        userRepository.save(user);
-        return "successful";
 
+        existByUsername(userRequest.getUsername().toLowerCase());
+        User user1= new User();
+        user1.setUsername(userRequest.getUsername());
+        user1.setFirstName(userRequest.getFirstName());
+        user1.setLastName(userRequest.getLastName());
+        user1.setPassword(userRequest.getPassword());
+        userRepository.save(user1);
+        return "successful";
+    }
+
+    private User existByUsername(String username) {
+        if(userRepository.existsByUsername(username))
+            throw new UsernameDoseNotExist("UserName Exist Already");
+        return null;
     }
 
     @Override
     public String login(LoginRequest loginRequest) {
         User user = userRepository.findByUsername(loginRequest.getUsername());
-        if (user == null) {
+        if (user == null ) {
             throw new UserNotFoundException("User not found");
         }
-        user.setUsername(loginRequest.getUsername());
-        user.setPassword(loginRequest.getPassword());
-        userRepository.save(user);
+        if(!user.getPassword().equals(loginRequest.getPassword())){ throw new WrongUserName("wrong password");}
         user.setIsLogin(true);
-//        if(!user.getUsername().equals(loginRequest.getUsername())) throw new WrongUserName("wrong username");
-//        if(!user.getPassword().equals(loginRequest.getPassword())){ throw new WrongUserName("wrong password");}
-
+        userRepository.save(user);
         return "YOU HAVE SUCCESSFULLY LOGGED IN";
     }
+
 
     @Override
     public String logout(LogoutRequest logoutRequest) {
@@ -64,12 +69,27 @@ public class UserServiceImp implements UserService{
     @Override
     public void update(UpdateUserRequest updateContactRequest) {
         User user = userRepository.findByUsername(updateContactRequest.getUsername());
-        System.out.println(user);
+
         user.setUsername(updateContactRequest.getNewUsername());
         user.setPassword(updateContactRequest.getNewPassword());
-        System.out.println(user);
         userRepository.save(user);
     }
+
+    @Override
+    public User delete(DeleteUserRequest deleteUserRequest) {
+        User user = findByUsername(deleteUserRequest.getUsername());
+        userRepository.delete(user);
+        DeleteUserResponse deleteUserResponse = new DeleteUserResponse();
+        user.setUsername(deleteUserResponse.getUsername());
+        return user;
+    }
+
+    private User findByUsername(String username) {
+        User user = userRepository.findByUsername(username);
+        if(user == null)throw new UserDoseNotExist("User Dosen't Exist");
+        return user;
+    }
+
 
     @Override
     public Contact Contact(ContactDto contactDto){
@@ -83,9 +103,10 @@ public class UserServiceImp implements UserService{
     public String deleteContact(DeleteContactRequest username){
         return contactService.deleteContact(username);
     }
+
     @Override
-    public Contact findByPhoneNumber(String phoneNumber){
-        return contactService.getContact(phoneNumber);
+    public Contact findContactByPhoneNumber(FindContactRequest findContactRequest){
+        return contactService.findContactByPhoneNumber(findContactRequest);
     }
     @Override
     public List<Contact> findAllContact(){

@@ -1,9 +1,12 @@
-package africaSemicolon.contact4.service;
+package com.example.contactmanagement.service;
 
-import africaSemicolon.contact4.dtos.ContactDto;
-import africaSemicolon.contact4.data.model.Contact;
-import africaSemicolon.contact4.dtos.request.DeleteContactRequest;
-import africaSemicolon.contact4.dtos.request.UpdateContactRequest;
+
+
+import com.example.contactmanagement.data.model.Contact;
+import com.example.contactmanagement.dtos.ContactDto;
+import com.example.contactmanagement.dtos.request.DeleteContactRequest;
+import com.example.contactmanagement.dtos.request.FindContactRequest;
+import com.example.contactmanagement.dtos.request.UpdateContactRequest;
 
 import java.util.List;
 
@@ -12,7 +15,8 @@ public interface ContactService {
         Contact createContact(ContactDto contactDto);
         Contact updateContact(UpdateContactRequest updateContactRequest);
         String deleteContact(DeleteContactRequest deleteContactRequest);
-        Contact getContact(String username);
+//        Contact getContact(String phoneNumber);
+        Contact findContactByPhoneNumber(FindContactRequest findContactRequest);
         List<Contact> findAllContacts();
 
 
